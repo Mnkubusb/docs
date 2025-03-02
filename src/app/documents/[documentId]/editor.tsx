@@ -25,9 +25,23 @@ import TextAlign from '@tiptap/extension-text-align'
 import { fontSizeExtension } from '@/extentions/font-size'
 import { lineHeight } from '@/extentions/line-height'
 import { Ruler } from './Ruler'
+import { FloatingToolbar, useLiveblocksExtension } from "@liveblocks/react-tiptap";
+import { useStorage } from '@liveblocks/react'
+import { Threads } from './threads'
+
+interface EditorProps {
+   initailContent?: string | undefined
+}
 
 
-export const Editor = () => {
+export const Editor = ( { initailContent }: EditorProps  ) => {
+
+    const leftMargin = useStorage(( root ) => root.leftMargin);
+    const rightMargin = useStorage(( root ) => root.rightMargin); 
+    const liveblocks = useLiveblocksExtension({
+        initialContent : initailContent,
+        offlineSupport_experimental : true
+    });
     const { setEditor } = useEditorStore();
 
     const editor = useEditor({
@@ -58,11 +72,13 @@ export const Editor = () => {
         },
         editorProps: {
             attributes: {
-                style: 'padding-left: 56px; padding-right: 56px;',
+                style: `padding-left: ${leftMargin ?? 56}px; padding-right: ${rightMargin ?? 56}px;`,
                 class: 'focus:outline-none print:border-0 bg-white border border-[#C7C7C7] flex flex-col min-h-[1054px] w-[816px] pt-10 pr-14 pb-10 cursor-text',
             }
         },
+
         extensions: [
+            liveblocks,
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
@@ -77,7 +93,6 @@ export const Editor = () => {
                 defaultProtocol: "https"
             }),
             Color,
-
             TextStyle,
             FontFamily,
             Underline,
@@ -88,7 +103,9 @@ export const Editor = () => {
             Paragraph,
             Text,
             Gapcursor,
-            StarterKit,
+            StarterKit.configure({
+                history: false,
+            }),
             TaskList,
             Table.configure({
                 resizable: true,
@@ -99,28 +116,14 @@ export const Editor = () => {
             TaskItem.configure({
                 nested: true,
             }),],
-
-        content:
-            `<table>
-          <tbody>
-            <tr>
-              <th>Name</th>
-              <th colspan="3">Description</th>
-            </tr>
-            <tr>
-              <td>Cyndi Lauper</td>
-              <td>Singer</td>
-              <td>Songwriter</td>
-              <td>Actress</td>
-            </tr>
-          </tbody>
-        </table>`
     })
     return (
         <div className='size-full px-4 print:p-0 print:bg-white print:overflow-visible overflow-x-auto bg-[#F9FBFD]'>
             <Ruler />
             <div className='min-w-max flex justify-center w-[816px] py-4 print:py-0 mx-auto print:w-full print:min-w-0'>
-                <EditorContent editor={editor} />
+                <EditorContent editor={editor}  />
+                <Threads editor={editor}  />
+                <FloatingToolbar editor={editor} />
             </div>
         </div>
     );

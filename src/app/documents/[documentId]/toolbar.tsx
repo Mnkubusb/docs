@@ -597,22 +597,22 @@ const Toolbar = () => {
                 {
                     label: "Italic",
                     icon: Italic,
-                    isActive: editor?.isActive('Italic'),
+                    isActive: editor?.isActive('italic'),
                     onClick: () => editor?.chain().focus().toggleItalic().run(),
                 },
                 {
                     label: "Underline",
                     icon: Underline,
-                    isActive: editor?.isActive('Underline'),
+                    isActive: editor?.isActive('underline'),
                     onClick: () => editor?.chain().focus().toggleUnderline().run(),
                 },
             ],
             [
                 {
-                    label: "Comments",
+                    label: "Comment",
                     icon: MessageSquarePlusIcon,
-                    onClick: () => { console.log("Comments") },
-                    isActive: false //TODO: Enable this functionality
+                    onClick: () => editor?.chain().focus().addPendingComment().run(),
+                    isActive: editor?.isActive("liveblocksCommentMark"),
                 },
                 {
                     label: "List Todo",

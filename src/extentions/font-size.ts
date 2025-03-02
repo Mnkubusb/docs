@@ -46,7 +46,7 @@ export const fontSizeExtension = Extension.create({
                 .setMark('textStyle', { fontSize })
                 .run()
             },
-            unsetFotnSize : () => ({ chain }) =>{
+            unsetFotnSize : () => ({ chain }: any ) =>{
                 return chain()
                 .setMark('textStyle', { fontSize: null })
                 .removeEmptyTextStyle()

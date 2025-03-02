@@ -1,13 +1,21 @@
-
-import { set } from "date-fns";
+"use client";
 import { useRef, useState } from "react";
+import { useStorage , useMutation } from "@liveblocks/react";
 import { FaCaretDown } from "react-icons/fa";
 const markers = Array.from({ length: 83 }, (_ , i) => i );
 
 export const Ruler = () => { 
 
-    const [leftMargin , setLeftMargin] = useState(56);
-    const [rightMargin , setRightMargin] = useState(56);
+    const leftMargin = useStorage(( root ) => root.leftMargin) ?? 56;
+    const setLeftMargin = useMutation(({ storage } , positiom : number) => {
+        storage.set("leftMargin" , positiom);
+    }, []);
+
+    const rightMargin = useStorage(( root ) => root.rightMargin) ?? 56;
+    const setRightMargin = useMutation(({ storage } , positiom : number) => {
+        storage.set("rightMargin" , positiom);
+    }, []);
+    
     
     const [isDraggingLeft , setIsDraggingLeft] = useState(false);
     const [isDraggingRight , setIsDraggingRight] = useState(false);
@@ -19,6 +27,7 @@ export const Ruler = () => {
     const handleRightMouseDown = () => {
         setIsDraggingRight(true);
     }
+    
      
     const handleMouseMove = (e: React.MouseEvent ) => {
         console.log(e);
@@ -30,12 +39,12 @@ export const Ruler = () => {
                 const rawPosition = Math.max(0, Math.min(816, relativeX));
 
                 if(isDraggingLeft) {
-                    const maxLeftPosition = 816 - rightMargin -100;
+                    const maxLeftPosition = 816 - rightMargin - 100;
                     const newLeftPosition = Math.min(rawPosition, maxLeftPosition);
-                    setLeftMargin(newLeftPosition); //TODO Make Collaborative
+                    setLeftMargin(newLeftPosition);
                 }else if(isDraggingRight) {
                     const maxRightPosition = 816 - (leftMargin + 100);
-                    const newRightPosition = Math.min(816 - rawPosition, 0);
+                    const newRightPosition = Math.max(816 - rawPosition, 0);
                     const constrainedRightPosition = Math.min(newRightPosition, maxRightPosition);
                     setRightMargin(constrainedRightPosition);
                 }
@@ -61,21 +70,21 @@ export const Ruler = () => {
             onMouseMove={handleMouseMove} 
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            className="h-6 border-b border-gray-300 flex items-end relative select-none print:hidden">
-            <div id="ruler-container" className="max-w-[816px] mx-auto w-full h-full relative">
+            className="w-[816px] mx-auto h-6 border-b border-gray-300 flex items-end relative select-none print:hidden">
+            <div id="ruler-container" className="w-full h-full relative">
                 <Marker 
-                    positiom={56}
+                    positiom={leftMargin}
                     isLeft={true}
-                    isDragging={false}
-                    onMouseDown={() => {}}
-                    onDoubleClick={() => {}} 
+                    isDragging={isDraggingLeft}
+                    onMouseDown={handleLeftMouseDown}
+                    onDoubleClick={handleLeftDoubleClick} 
                  />
                 <Marker 
-                    positiom={56}
+                    positiom={rightMargin}
                     isLeft={false}
-                    isDragging={false}
-                    onMouseDown={() => {}}
-                    onDoubleClick={() => {}} 
+                    isDragging={isDraggingRight}
+                    onMouseDown={handleRightMouseDown}
+                    onDoubleClick={handleRightDoubleClick} 
                  />
                 <div className="absolute inset-x-0 bottom-0 h-full">
                     <div className="relative h-full w-[816px]">
@@ -126,7 +135,6 @@ export const Ruler = () => {
   }
 
   const Marker = ({ positiom, isLeft, isDragging, onMouseDown, onDoubleClick }: MarkerProps) => {
-    console.log(isDragging);
     return (
         <div 
             className="absolute top-0 w-4 h-full cursor-ew-resize z-[5] group -ml-2"
@@ -135,6 +143,15 @@ export const Ruler = () => {
             onDoubleClick={onDoubleClick}    
         >
             <FaCaretDown className="absolute left-1/2 top-0 h-full fill-blue-500 tranform -translate-x-1/2" />
+            <div className="absolute left-1/2 top-4 transform -translate-x-1/2 "
+                style={{
+                    height: "100vh",
+                    width: "1px",
+                    transform: "scaleX(0.5)",
+                    backgroundColor: "#3b72f6",
+                    display: isDragging ? "block" : "none"
+                }}
+            />
         </div>
     )
   }
