@@ -47,7 +47,7 @@ A **Google Docs Clone** built using **Next.js, TipTap, Liveblocks, Convex, and C
 
 ## 📷 Screenshots
 
-(Include screenshots or a GIF demo of your app here)
+![Demo](/public/screenshots/network.png)
 
 ## 🤝 Contributing
 
