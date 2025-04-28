@@ -1,6 +1,6 @@
-# Real-Time Collaborative Document Editor
+# FlowDocs - Real-Time Collaborative Document Editor
 
-A **Google Docs Clone** built using **Next.js, TipTap, Liveblocks, Convex, and Clerk** for seamless real-time document editing and collaboration.
+Built using **Next.js, TipTap, Liveblocks, Convex, and Clerk** for seamless real-time document editing and collaboration.
 
 ## 🚀 Features
 
