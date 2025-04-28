@@ -1,7 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
-import { redirect } from "next/navigation";
 
 
 export const getByIds = query({
@@ -27,12 +26,12 @@ export const create = mutation({
   args : { title: v.optional(v.string()) , initialContent: v.optional(v.string()) },
   handler : async ( ctx , args )=> {
     const user = await ctx.auth.getUserIdentity();
-    
+
     if(!user){
        throw new ConvexError("Unauthorized");
     }
 
-    const organisationId = (user.organisation_id ?? undefined) as 
+    const organisationId = (user.organisation_id ?? undefined) as
     | string
     | undefined ;
 
@@ -58,14 +57,14 @@ export const get = query({
         throw new ConvexError("Unauthorized");
       }
 
-      const organisationId = (user.organisation_id ?? undefined) as 
+      const organisationId = (user.organisation_id ?? undefined) as
        | string
        | undefined ;
 
       if( search && organisationId ) {
         return await ctx.db
           .query("documents")
-          .withSearchIndex("search_title" , (q) => 
+          .withSearchIndex("search_title" , (q) =>
               q.search("title" , search).eq("organisationId" , organisationId)
           )
           .paginate(paginationOpts)
@@ -102,13 +101,13 @@ export const get = query({
         }
 
         const document = await ctx.db.get(args.id);
-        
+
         if(!document){
           throw new ConvexError("Document not found");
         }
 
         const isOwner = document.ownerId === user.subject;
-        
+
         if(!isOwner){
           throw new ConvexError("Unauthorized");
         }
@@ -125,19 +124,19 @@ export const get = query({
         if(!user){
           throw new ConvexError("Unauthorized");
         }
-        const organisationId = (user.organisation_id ?? undefined) as 
+        const organisationId = (user.organisation_id ?? undefined) as
            | string
            | undefined ;
 
         const document = await ctx.db.get(args.id);
-        
+
         if(!document){
           throw new ConvexError("Document not found");
         }
 
         const isOwner = document.ownerId === user.subject;
         const isOrganisationMember = !!(document.organisationId && document.organisationId === organisationId);
-        
+
         if(!isOwner && !isOrganisationMember){
           throw new ConvexError("Unauthorized");
         }

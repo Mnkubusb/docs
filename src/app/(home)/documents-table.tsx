@@ -32,7 +32,7 @@ export const DocumentsTable = ({ documents, loadMore, status }: DocumentsTablePr
                         <TableBody>
                             <TableRow className="hover:bg-transparent border-none">
                                 <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                                    No documents Founde
+                                    No documents Found
                                 </TableCell>
                             </TableRow>
                         </TableBody>
